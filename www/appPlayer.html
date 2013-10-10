@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+        <script type="text/javascript" charset="utf-8" src="MobileAppAPI.js">
+        </script>
+    </head>
+    <body>
+        <h1> Audio Player example</h1>
+	   <button type="button" onClick="onClickSetUrl()">
+	            set URL
+	        </button>
+	        <input type="text" id="currentUrl" size="15" value="http://icy3.abacast.com:80/nabco-wjkrfmmp3-48">
+	  <br/>
+        <button type="button" onClick="onClickPlay()">
+            Play
+        </button>
+        <script type="text/javascript">
+            var _playerHandle = 0;
+            var cbSuccess = function(playerHandle)
+            {
+                _playerHandle = playerHandle;
+                alert("audio player succ");
+            };
+            // Audio location failure 
+            function cbFail()
+            {
+                alert("failed");
+            }
+            
+            var cbSuccessSetURL = function()
+	            {
+	                alert("audio player setURL suc");
+	            }; 
+var cbSuccessPlay = function()
+            {
+                alert("audio player play suc");
+            };
+            // Init Conduit API
+            conduitApi.init(function()
+            {
+                if (conduitApi.platform.audio.isSupported()) 
+                {
+                    // create player
+                    conduitApi.platform.audio.createPlayer(cbSuccess, cbFail);
+                }
+                else 
+                {
+                    alert("audio not supported");
+                }
+            });
+
+function onClickSetUrl()
+	      {
+	                if (conduitApi.platform.audio.isSupported()) 
+	                {
+	                    // create player
+	                    url = document.getElementById('currentUrl').value;
+	                    conduitApi.platform.audio.setUrl(cbSuccessSetURL, cbFail, _playerHandle, url);
+	                }
+	                else 
+	                {
+	                    alert("audio not supported");
+	                }
+	            }
+            function onClickPlay()
+            {
+                if (conduitApi.platform.audio.isSupported()) 
+                {
+                    // create player
+                    conduitApi.platform.audio.play(cbSuccessPlay, cbFail, _playerHandle);
+                }
+                else 
+                {
+                    alert("audio not supported");
+                }
+            }
+        </script>
+    </body>
+</html>
+
+

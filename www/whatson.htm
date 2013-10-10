@@ -1,0 +1,150 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="Tue, 24 Aug 2004 21:29:02 GMT"> 
+<TITLE>WRN STORQ MonirtAir Online Edition</TITLE>
+
+<SCRIPT LANGUAGE = "JavaScript">
+  <!--
+  //Waitt Radio Networks Radio Broadcast Data Systems (RBDS) Web-Script
+  //Written By John Brendle build 040930
+
+  //This page is for use with the WRN STORQ System to display the currently airing song
+  //according to the as-played log. This file should work in near real-time and
+  //may be freely modified for use with a station's website.
+
+  var msg = "NABCO|103.9 JACKFM";              //Generic Message for Program Display. Must include a pipe(|)
+  var cycle = "0:30";                                           //This is the time to refresh in MM:SS. Default is 0:30
+  var datafile = "data.txt";                                    //Set this to the STORQ RBDS file output. Default is data.txt
+  var calls = "JACK FM";                                          //Station call letters
+  var frequency = "103.9";                                       //Station frequency
+  var AMFM = "FM";                                              //Set to AM or FM frequency
+  var url="http://www.997wrkz.net/wjkr/whatson.php";     //URL to the whatson.htm file for use as the bookmark
+  var title="See What's Playing on Your_Station";               //Set the name for your bookmark
+  var logo="images/wrnlogo.gif";                                //Name of your logo. Must be no bigger than 40x120
+  var logourl="http://www.wrnonline.com";                       //Set to path logo should take visitor to.
+
+  
+  //******************DO NOT EDIT TEXT BELOW THIS LINE*************************************
+  var airdata=new Array();
+  var curr = "";
+  var i=-1;
+  var F = "F3";
+  var sby = "";
+  
+  var objXml = new ActiveXObject("Microsoft.XMLHTTP");
+  airdata[0]=msg;
+
+  if (document.images) {
+    var parselimit = cycle.split(":");
+    parselimit = parselimit[0]*60+parselimit[1]*1;
+    parselimitbase = parselimit;
+    }
+
+  function DisplayOnAir() {
+    if (i < airdata[0].length + 1) {
+      i++;
+      temp1 = airdata[0].split("|");
+      temp2 = temp1[0]+" - "+temp1[1];
+      temp1 = temp2.split("");
+      curr = curr+temp1[i];
+      mtxt.innerHTML = "<small><font color='#33FF00'>"+curr+"_</small></font>";
+      setTimeout("DisplayOnAir()",10);
+      }
+    else {
+      RefreshPage();
+      }
+    }
+
+  function RefreshPage() {
+    if (!document.images) return;
+    if (parselimit==1) {
+      airdata=new Array();
+      airdata[0]=msg;
+      curr = "";
+      i=-1;
+      parselimit = parselimitbase;
+      ReloadDatafile();
+      DisplayOnAir();
+      }
+    else { 
+      parselimit-=1;
+      curmin=Math.floor(parselimit/60);
+      cursec=parselimit%60;
+      if (curmin!=0) {
+        curtime=curmin+" Minutes and "+cursec+" Seconds until page refresh!";
+        }
+      else {
+        curtime=cursec+" Seconds until page refresh!";
+        window.status=curtime;
+        setTimeout("RefreshPage()",1000);
+        }
+      }
+    }
+
+  function ReloadDatafile() {
+    objXml.open("GET", datafile, false);
+    objXml.onreadystatechange =
+    function() {
+      if (objXml.readyState==4) {
+        sby= (objXml.responseText);
+        var the_length=sby.length;
+        var last_char=sby.charAt(the_length-1);      
+        if (last_char == "|") { sby = sby + " "; } 
+        sby= sby.toUpperCase();
+        airdata[0]= sby.substring(20,60);
+        }
+      }
+      objXml.send(null);
+    }  
+
+  ReloadDatafile();
+
+  function gloCalls() {
+    if (document.getElementById&&document.all) {
+      ok = true;
+      wrn.className = F;
+      } 
+    }
+
+  function getLink() {
+    day = new Date();
+    id = day.getTime();
+    eval("page" + id + " = window.open(logourl, '" + id + "', 'toolbar=1,scrollbars=1,location=1,statusbar=1,menubar=1,resizable=1,width=800,height=600,left = 1,top = 1');");
+    }
+  //-->
+  </SCRIPT>
+<style>
+  .F3 {filter: glow(Color=#0080ff,Strength=12);
+     width=600px;
+     height=200px;}
+</style>
+</HEAD>
+<BODY BGCOLOR='#CBDDEF' onLoad="gloCalls(); DisplayOnAir();">
+  <FONT FACE="ARIAL" SIZE="3"><TABLE WIDTH="460" BACKGROUND="images/player.gif" CELLPADDING="5"><TR><TD COLSPAN="2">
+  <TABLE CELLSPACING="0" CELLPADDING="0" BORDERCOLOR="#123456" BGCOLOR="#777777" BORDER="1" WIDTH="450">
+    <TR><TD><DIV ID="mtxt" STYLE="position:relative;top:1px;padding:1px 1px 1px 1px;font-family:Arial;font-size:18pt;width:100%;height:25px"></DIV></TD></TR></TABLE></FONT></TD></TR>
+    <TR><TD WIDTH="320" VALIGN="TOP"><FONT FACE="Arial" SIZE="6" COLOR="#FFFFFF"><DIV ID="wrn" STYLE="position:relative;top:1px;padding:0px 1px 1px 1px;width:100%;height:25px"><B>&nbsp; 
+      <SCRIPT>document.write(calls + " - " + frequency);</SCRIPT><font face="Arial" size="5" color="#FFFFFF"><SCRIPT>document.write(AMFM);</SCRIPT></B></FONT></DIV></TD>
+      <TD VALIGN="TOP"><A HREF=javascript:getLink(logourl);><SCRIPT LANGUAGE="JavaScript">document.write('<IMG SRC='+logo+' HEIGHT=40 WIDTH=120 BORDER=0>');</SCRIPT></A></TD></TR>
+    <TR><TD COLSPAN="2"><CENTER><FONT FACE="ARIAL" SIZE="1">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &copy 2004 Waitt Radio Networks. All Rights Reserved.<br>
+    <SCRIPT LANGUAGE="Javascript">
+      <!-- Begin
+        if ((navigator.appName == "Microsoft Internet Explorer") && (parseInt(navigator.appVersion) >= 4)) {
+          document.write('<A HREF="javascript:window.ext');
+          document.write('ernal.AddFavorite(url,title);" ');
+          document.write('onMouseOver=" window.status=');
+          document.write("'Add this site to your favorites!'; return true ");
+          document.write('"onMouseOut=" window.status=');
+          document.write("' '; return true ");
+          document.write('">Add this site to your favorites!</a>');
+          }
+        else {
+          var msg = "Don't forget to bookmark us!";
+          if(navigator.appName == "Netscape") msg += " (CTRL-D)";
+          document.write(msg);
+          }
+      // End -->
+    </SCRIPT>
+</FONT></CENTER></TD></TR></TABLE>    
+</BODY></HTML>
